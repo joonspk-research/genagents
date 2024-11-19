@@ -54,6 +54,8 @@ Additionally, to provide users with a sense of the interview-based agents, we of
 Install the required Python packages using pip:
 
 ```bash
+git clone https://github.com/joonspk-research/genagents
+cd genagents
 pip install -r requirements.txt
 ```
 
