@@ -264,7 +264,7 @@ GPT4All supports a wide range of open-source models optimized for diverse use ca
 
 For the complete list of models and detailed documentation on installation, configuration, and usage, visit the official GPT4All Python library documentation:
 📖 [GPT4All Documentation](https://docs.gpt4all.io/gpt4all_python/home.html)
-
+📖 [GPT4All Internal Documentation](https://raw.githubusercontent.com/nomic-ai/gpt4all/main/gpt4all-chat/metadata/models3.json)
 
 ## Contributing
 
