@@ -64,19 +64,50 @@ Create a `settings.py` file in the `simulation_engine` folder (where `example-se
 ```python
 from pathlib import Path
 
-OPENAI_API_KEY = "YOUR_API_KEY"
-KEY_OWNER = "YOUR_NAME"
+# API Keys
+OPENAI_API_KEY = "API_KEY"  # Replace with your actual OpenAI API key
+ANTHROPIC_API_KEY = "API_KEY"  # Replace with your actual Anthropic API key
 
-DEBUG = False
+# Owner Information
+KEY_OWNER = "NAME"  # Replace with the name of the key owner
 
-MAX_CHUNK_SIZE = 4
+# Debugging Configuration
+DEBUG = False  # Set to True for enabling debug logs
 
-LLM_VERS = "gpt-4o-mini"
+# Configuration for Chunk Size
+MAX_CHUNK_SIZE = 4  # Maximum size of data chunks to process
 
-BASE_DIR = f"{Path(__file__).resolve().parent.parent}"
+# LLM Configuration
+LLM_VERS = "claude-3-5-sonnet-20241022"  
+# Options: 
+# - "gpt-4o-mini" (OpenAI GPT model)
+# - "claude-3-5-sonnet-20241022" (Anthropic Claude model)
+# - "gpt4all" (Open-source GPT model)
 
-POPULATIONS_DIR = f"{BASE_DIR}/agent_bank/populations"
-LLM_PROMPT_DIR = f"{BASE_DIR}/simulation_engine/prompt_template"
+# GPT4All Model Settings
+LLM_MODEL = "MODEL GPT4ALL"  
+# Options: 
+# - "orca-mini-3b-gguf2-q4_0.gguf" (3 Billion Parameters, 4GB RAM)
+# - "Meta-Llama-3-8B-Instruct.Q4_0.gguf" (8 Billion Parameters, 8GB RAM)
+# - "Nous-Hermes-2-Mistral-7B-DPO.Q4_0.gguf" (7 Billion Parameters, 8GB RAM)
+
+# Notes:
+# - Choose the model based on your hardware capabilities and task requirements.
+# - Ensure you have sufficient RAM to load the selected model.
+# - Visit 📖 [GPT4All Documentation](https://docs.gpt4all.io/gpt4all_python/home.html) for detailed information.
+
+# Base Directory
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Directory Configurations
+# - Populations Directory: Used for managing agent populations
+# - Prompt Template Directory: Contains LLM prompt templates
+POPULATIONS_DIR = BASE_DIR / "agent_bank" / "populations"
+LLM_PROMPT_DIR = BASE_DIR / "simulation_engine" / "prompt_template"
+
+# Note:
+# - Ensure `POPULATIONS_DIR` and `LLM_PROMPT_DIR` exist in your project structure.
+# - Adjust the paths as needed for your specific setup.
 ```
 
 Replace `"YOUR_API_KEY"` with your actual OpenAI API key and `"YOUR_NAME"` with your name.
@@ -218,6 +249,22 @@ print(response["responses"])
 ## Agent Bank Access
 
 Due to participant privacy concerns, the full agent bank containing over 1,000 generative agents based on real interviews is not publicly available at the moment. However, we plan to make aggregated responses on fixed tasks accessible for general research use in the coming months. Researchers interested in accessing individual responses on open tasks can request restricted access by contacting the authors and following a review process that ensures ethical considerations are met.
+
+## Test run local model with GPT4ALL
+GPT4All supports a wide range of open-source models optimized for diverse use cases, including general language understanding, code generation, and specialized tasks. Below are some commonly used models:
+
+| Model Name                                 | Filesize | RAM Required | Parameters | Quantization | Developer           | License            |
+|-------------------------------------------|----------|--------------|------------|--------------|---------------------|--------------------|
+| **Meta-Llama-3-8B-Instruct.Q4_0.gguf**    | 4.66 GB  | 8 GB         | 8 Billion  | q4_0         | Meta                | [Llama 3 License](https://llama-license-link.com) |
+| **Nous-Hermes-2-Mistral-7B-DPO.Q4_0.gguf**| 4.11 GB  | 8 GB         | 7 Billion  | q4_0         | Mistral & Nous Research | [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) |
+| **Phi-3-mini-4k-instruct.Q4_0.gguf**      | 2.18 GB  | 4 GB         | 3.8 Billion| q4_0         | Microsoft           | [MIT](https://opensource.org/licenses/MIT) |
+| **orca-mini-3b-gguf2-q4_0.gguf**          | 1.98 GB  | 4 GB         | 3 Billion  | q4_0         | Microsoft           | [CC-BY-NC-SA-4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) |
+| **gpt4all-13b-snoozy-q4_0.gguf**          | 7.37 GB  | 16 GB        | 13 Billion | q4_0         | Nomic AI            | [GPL](https://www.gnu.org/licenses/gpl-3.0.html) |
+
+
+For the complete list of models and detailed documentation on installation, configuration, and usage, visit the official GPT4All Python library documentation:
+📖 [GPT4All Documentation](https://docs.gpt4all.io/gpt4all_python/home.html)
+
 
 ## Contributing
 

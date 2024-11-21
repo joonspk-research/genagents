@@ -5,8 +5,39 @@ from typing import List, Union
 
 from simulation_engine.settings import *
 
+# Conditional import for GPT4All
+gpt4all_instance = None
+if LLM_VERS == "gpt4all":
+  try:
+    from gpt4all import GPT4All, Embed4All
+  except ImportError:
+    raise ImportError(
+      "The 'gpt4all' library is not installed. Please install it with 'pip install gpt4all' to use GPT4All models."
+    )
+  try:
+    gpt4all_instance = GPT4All(LLM_MODEL, n_ctx=28672)
+    gpt4all_embeddings = Embed4All("nomic-embed-text-v1.5.f16.gguf")
+  except Exception as e:
+    raise RuntimeError(
+      f"Failed to initialize GPT4All with the model '{LLM_MODEL}'. "
+      "Ensure the model file exists and is correctly configured."
+    ) from e
+elif LLM_VERS.startswith("claude"):
+  try:
+    import anthropic
+  except ImportError:
+    raise ImportError(
+      "The 'anthropic' library is not installed. Please install it with 'pip install anthropic' to use anthropic models."
+    )
+  try:
+    anthropic_client = anthropic.Client(api_key=ANTHROPIC_API_KEY)
+  except Exception as e:
+    raise RuntimeError(
+      f"Failed to initialize anthropic with the model '{LLM_VERS}'. "
+      "Ensure the model file exists and is correctly configured."
+    ) from e
+    
 openai.api_key = OPENAI_API_KEY
-
 
 # ============================================================================
 # #######################[SECTION 1: HELPER FUNCTIONS] #######################
@@ -53,7 +84,7 @@ def generate_prompt(prompt_input: Union[str, List[str]],
 def gpt_request(prompt: str, 
                 model: str = "gpt-4o", 
                 max_tokens: int = 1500) -> str:
-  """Make a request to OpenAI's GPT model."""
+  """Make a request to OpenAI or GPT4All based on LLM_VERS."""
   if model == "o1-preview": 
     try:
       client = openai.OpenAI(api_key=OPENAI_API_KEY)
@@ -64,7 +95,34 @@ def gpt_request(prompt: str,
       return response.choices[0].message.content
     except Exception as e:
       return f"GENERATION ERROR: {str(e)}"
+  if LLM_VERS == "gpt4all":
+    try:
+      response = gpt4all_instance.generate(
+        prompt=prompt, 
+        max_tokens=max_tokens,
+        temp=0.7
+      )
 
+      return response
+    except Exception as e:
+      raise ImportError(
+        f"GENERATION ERROR GPT4ALL: {str(e)}"
+      )
+  elif LLM_VERS.startswith("claude"):
+    try:
+      response = anthropic_client.messages.create(
+        model=LLM_VERS, 
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=max_tokens,
+        temperature=0.7,
+      )
+
+      return response.content[0].text
+    except Exception as e:
+      raise ImportError(
+        f"GENERATION ERROR ANTTHROPIC: {str(e)}"
+      )
+    
   try:
     client = openai.OpenAI(api_key=OPENAI_API_KEY)
     response = client.chat.completions.create(
@@ -75,8 +133,10 @@ def gpt_request(prompt: str,
     )
     return response.choices[0].message.content
   except Exception as e:
-    return f"GENERATION ERROR: {str(e)}"
-
+    raise ImportError(
+      f"GENERATION ERROR OPENAI: {str(e)}"
+    )
+  
 
 def gpt4_vision(messages: List[dict], max_tokens: int = 1500) -> str:
   """Make a request to OpenAI's GPT-4 Vision model."""
@@ -159,8 +219,15 @@ def get_text_embedding(text: str,
     raise ValueError("Input text must be a non-empty string.")
 
   text = text.replace("\n", " ").strip()
-  response = openai.embeddings.create(
-    input=[text], model=model).data[0].embedding
+
+  if LLM_VERS == "gpt4allx":
+    # Temporal solution to get the same embedding twice
+    response = list(gpt4all_embeddings.embed(text=[text], dimensionality=768)[0]) + list(gpt4all_embeddings.embed(text=[text], dimensionality=768)[0]) 
+
+  else:
+    response = openai.embeddings.create(
+      input=[text], model=model).data[0].embedding
+    
   return response
 
 
