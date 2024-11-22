@@ -220,7 +220,7 @@ def get_text_embedding(text: str,
 
   text = text.replace("\n", " ").strip()
 
-  if LLM_VERS == "gpt4allx":
+  if LLM_VERS == "gpt4all":
     # Temporal solution to get the same embedding twice
     response = list(gpt4all_embeddings.embed(text=[text], dimensionality=768)[0]) + list(gpt4all_embeddings.embed(text=[text], dimensionality=768)[0]) 
 
