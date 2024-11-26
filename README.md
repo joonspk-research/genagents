@@ -205,7 +205,7 @@ A sample agent is provided in the `agent_bank/populations/single_agent/` directo
 You can load and interact with the sample agent as follows:
 
 ```python
-agent = GenerativeAgent(agent_folder="agent_bank/populations/single_agent")
+agent = GenerativeAgent(agent_folder="agent_bank/populations/single_agent/01fd7d2a-0357-4c1b-9f3e-8eade2d537ae")
 
 # Interact with the agent
 questions = {
